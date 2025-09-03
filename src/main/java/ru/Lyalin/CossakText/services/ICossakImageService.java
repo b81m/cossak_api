@@ -10,5 +10,5 @@ public interface ICossakImageService {
     CossakImage findById(Long id);
     void deleteCossakImageById(Long id);
     CossakImageDto saveCossakImage(MultipartFile file);
-    List<CossakImage> findAllCossakImages();
+    List<CossakImage> findAllImages();
 }

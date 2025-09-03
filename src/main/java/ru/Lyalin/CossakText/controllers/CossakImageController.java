@@ -22,7 +22,7 @@ public class CossakImageController {
     @GetMapping("/all")
     public ResponseEntity<Object> getAllCossakImages() {
         try{
-            List<CossakImage>  cossakImages = cossakImageService.findAllCossakImages();
+            List<CossakImage>  cossakImages = cossakImageService.findAllImages();
             return ResponseEntity.status(HttpStatus.OK).body(cossakImages);
         }catch(ResourceNotFoundException e){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());

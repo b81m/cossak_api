@@ -33,6 +33,10 @@ public class CossakImage {
     private String text;
     private LocalDate creationDate;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
     public CossakImage(byte[] originalImage, String originalImageName, byte[] translatedImage, String translatedImageName, String fileType, String text, LocalDate creationDate) {
         this.originalImage = originalImage;
         this.originalImageName = originalImageName;
