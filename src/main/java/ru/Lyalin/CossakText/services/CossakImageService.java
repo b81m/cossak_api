@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import ru.Lyalin.CossakText.dto.ApiResponseDto;
 import ru.Lyalin.CossakText.dto.CossakImageDto;
+import ru.Lyalin.CossakText.dto.CossakUploadImageDto;
 import ru.Lyalin.CossakText.entities.CossakImage;
 import ru.Lyalin.CossakText.entities.User;
 import ru.Lyalin.CossakText.exceptions.ResourceNotFoundException;
@@ -27,15 +28,15 @@ public class CossakImageService implements ICossakImageService {
     private final CertificateTranslatorService certificateTranslatorService;
     private final UserRepository userRepository;
 
-    private User getCurrentUser(){
+    private User getCurrentUser() {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         return userRepository.findByUsername(username);
     }
 
     @Override
-    public List<CossakImage> findAllImages() {
+    public List<CossakImageDto> findAllImages() {
         User currentUser = getCurrentUser();
-        List<CossakImage> cossakImages = cossakImageRepository.findByUser_Id(currentUser.getId());
+        List<CossakImageDto> cossakImages = cossakImageRepository.findByUser_Id(currentUser.getId());
         if (cossakImages.isEmpty()) {
             throw new ResourceNotFoundException("Cossak images not founded");
         }
@@ -58,7 +59,7 @@ public class CossakImageService implements ICossakImageService {
 
     @Override
     @Transactional
-    public CossakImageDto saveCossakImage(MultipartFile file) {
+    public CossakUploadImageDto saveCossakImage(MultipartFile file) {
         User currentUser = getCurrentUser();
         try {
             byte[] originalFileBytes = file.getBytes();
@@ -78,7 +79,7 @@ public class CossakImageService implements ICossakImageService {
 
             cossakImageRepository.save(cossakImage);
 
-            return new CossakImageDto(apiResponseDto.translatedImage(), translatedImageName, fileType, apiResponseDto.translation());
+            return new CossakUploadImageDto(apiResponseDto.translatedImage(), translatedImageName, fileType, apiResponseDto.translation());
         } catch (IOException e) {
             throw new RuntimeException(e.getMessage());
         }

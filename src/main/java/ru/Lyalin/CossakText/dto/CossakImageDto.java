@@ -1,5 +1,8 @@
 package ru.Lyalin.CossakText.dto;
 
-public record CossakImageDto(byte[] translatedImage, String translatedImageName, String fileType, String text) {}
+import java.time.LocalDate;
 
-
+public record CossakImageDto(Long id, byte[] originalImage, String originalImageName, byte[] translatedImage,
+                             String translatedImageName, String fileType, String text,
+                             LocalDate creationDate) {
+}

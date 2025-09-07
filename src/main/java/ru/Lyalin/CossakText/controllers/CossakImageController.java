@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.Lyalin.CossakText.dto.CossakImageDto;
+import ru.Lyalin.CossakText.dto.CossakUploadImageDto;
 import ru.Lyalin.CossakText.entities.CossakImage;
 import ru.Lyalin.CossakText.exceptions.ResourceNotFoundException;
 import ru.Lyalin.CossakText.services.CossakImageService;
@@ -22,7 +23,7 @@ public class CossakImageController {
     @GetMapping("/all")
     public ResponseEntity<Object> getAllCossakImages() {
         try{
-            List<CossakImage>  cossakImages = cossakImageService.findAllImages();
+            List<CossakImageDto> cossakImages = cossakImageService.findAllImages();
             return ResponseEntity.status(HttpStatus.OK).body(cossakImages);
         }catch(ResourceNotFoundException e){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
@@ -42,7 +43,7 @@ public class CossakImageController {
     @PostMapping("/add")
     public ResponseEntity<Object> createCossakImage(@RequestParam MultipartFile cossakImage) {
         try {
-            CossakImageDto cossakImageDto = cossakImageService.saveCossakImage(cossakImage);
+            CossakUploadImageDto cossakImageDto = cossakImageService.saveCossakImage(cossakImage);
             return ResponseEntity.status(HttpStatus.CREATED).body(cossakImageDto);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
