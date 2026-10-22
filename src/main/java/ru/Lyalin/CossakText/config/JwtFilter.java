@@ -4,6 +4,7 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import io.jsonwebtoken.JwtException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -38,20 +39,42 @@ public class JwtFilter extends OncePerRequestFilter {
 
         if(authHeader != null && authHeader.startsWith("Bearer ")){
             token = authHeader.substring(7);
-            userName = jwtService.extractUserName(token);
+            try {
+                userName = jwtService.extractUserName(token);
+            } catch (IllegalArgumentException | JwtException e) {
+                writeUnauthorizedResponse(response);
+                return;
+            }
         }
 
         if(userName != null && SecurityContextHolder.getContext().getAuthentication()==null){
 
             UserDetails userDetails = context.getBean(MyUserDetailsService.class).loadUserByUsername(userName);
 
-            if(jwtService.validateToken(token, userDetails)){
+            if(isTokenValid(token, userDetails)){
                 UsernamePasswordAuthenticationToken authToken =
                         new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                 authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authToken);
+            } else {
+                writeUnauthorizedResponse(response);
+                return;
             }
         }
         filterChain.doFilter(request, response);
+    }
+
+    private boolean isTokenValid(String token, UserDetails userDetails) {
+        try {
+            return jwtService.validateToken(token, userDetails);
+        } catch (IllegalArgumentException | JwtException e) {
+            return false;
+        }
+    }
+
+    private void writeUnauthorizedResponse(HttpServletResponse response) throws IOException {
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        response.setContentType("application/json");
+        response.getWriter().write("{\"message\":\"Invalid token\",\"status\":401}");
     }
 }

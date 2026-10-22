@@ -5,8 +5,6 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.JdbcTypeCode;
-import org.hibernate.type.SqlTypes;
 
 import java.time.LocalDate;
 
@@ -20,14 +18,10 @@ public class CossakImage {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Lob
-    @JdbcTypeCode(SqlTypes.BINARY)
-    private byte[] originalImage;
+    @Column(unique = true)
     private String originalImageName;
 
-    @Lob
-    @JdbcTypeCode(SqlTypes.BINARY)
-    private byte[] translatedImage;
+    @Column(unique = true)
     private String translatedImageName;
 
     private String fileType;
@@ -39,10 +33,8 @@ public class CossakImage {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    public CossakImage(byte[] originalImage, String originalImageName, byte[] translatedImage, String translatedImageName, String fileType, String text, LocalDate creationDate) {
-        this.originalImage = originalImage;
+    public CossakImage(String originalImageName, String translatedImageName, String fileType, String text, LocalDate creationDate) {
         this.originalImageName = originalImageName;
-        this.translatedImage = translatedImage;
         this.translatedImageName = translatedImageName;
         this.fileType = fileType;
         this.text = text;

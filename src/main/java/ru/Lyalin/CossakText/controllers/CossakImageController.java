@@ -1,17 +1,23 @@
 package ru.Lyalin.CossakText.controllers;
 
-import lombok.RequiredArgsConstructor;
+import java.util.List;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+
+import lombok.RequiredArgsConstructor;
+import ru.Lyalin.CossakText.dto.CossakImageDetailsDto;
 import ru.Lyalin.CossakText.dto.CossakImageDto;
 import ru.Lyalin.CossakText.dto.CossakUploadImageDto;
-import ru.Lyalin.CossakText.entities.CossakImage;
-import ru.Lyalin.CossakText.exceptions.ResourceNotFoundException;
 import ru.Lyalin.CossakText.services.CossakImageService;
-
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -22,41 +28,25 @@ public class CossakImageController {
 
     @GetMapping("/all")
     public ResponseEntity<Object> getAllCossakImages() {
-        try{
-            List<CossakImageDto> cossakImages = cossakImageService.findAllImages();
-            return ResponseEntity.status(HttpStatus.OK).body(cossakImages);
-        }catch(ResourceNotFoundException e){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        }
+        List<CossakImageDto> cossakImages = cossakImageService.findAllImages();
+        return ResponseEntity.status(HttpStatus.OK).body(cossakImages);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Object> getCossakImageById(@PathVariable Long id) {
-        try {
-            CossakImage cossakImage = cossakImageService.findById(id);
-            return ResponseEntity.status(HttpStatus.OK).body(cossakImage);
-        } catch (ResourceNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        }
+        CossakImageDetailsDto cossakImage = cossakImageService.findById(id);
+        return ResponseEntity.status(HttpStatus.OK).body(cossakImage);
     }
 
     @PostMapping("/add")
     public ResponseEntity<Object> createCossakImage(@RequestParam MultipartFile cossakImage) {
-        try {
-            CossakUploadImageDto cossakImageDto = cossakImageService.saveCossakImage(cossakImage);
-            return ResponseEntity.status(HttpStatus.CREATED).body(cossakImageDto);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-        }
+        CossakUploadImageDto cossakImageDto = cossakImageService.saveCossakImage(cossakImage);
+        return ResponseEntity.status(HttpStatus.CREATED).body(cossakImageDto);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> deleteCossakImageById(@PathVariable Long id) {
-        try {
-            cossakImageService.deleteCossakImageById(id);
-            return ResponseEntity.status(HttpStatus.OK).body("Successfully deleted");
-        } catch (ResourceNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        }
+        cossakImageService.deleteCossakImageById(id);
+        return ResponseEntity.status(HttpStatus.OK).body("Successfully deleted");
     }
 }

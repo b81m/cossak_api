@@ -5,6 +5,6 @@ CREATE TABLE cossak_images (
     translated_image bytea,
     translated_image_name varchar(50),
     file_type varchar(10),
-    text varchar(1000),
+    text varchar(10000),
     creation_date date
 )
